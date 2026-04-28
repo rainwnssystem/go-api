@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    ports:
+    - "8080:8080"
+    env_file:
+    - path: ./.env
+      required: true 
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql
+    restart: always
+    expose:
+    - 3306
+    environment:
+      MYSQL_USER: demo
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: demo
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
